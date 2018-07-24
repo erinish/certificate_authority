@@ -28,14 +28,20 @@ inter_ca_valid_days: 16425
 
 Example Playbook
 ----------------
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
-
+```YAML
+---
+- name: local CA role application
+  hosts: phylactery
+  roles:
+    - role: erinish.certificate_authority
+      ca_common_name: "Hollywoo Root CA"
+      ca_state_or_province_name: "California"
+      ca_organization_name: "Hollywoo"
+      inter_ca_common_name: "Hollywoo Intermediate CA"
+      inter_ca_state_or_province_name: "California"
+      inter_ca_organization_name: "Hollywoo"
+```
 License
 -------
 
-BSD
+MIT
