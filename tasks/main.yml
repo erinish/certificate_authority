@@ -1,4 +1,7 @@
 ---
+- name: Include requirements install
+  include_tasks: install_requirements.yml
+
 - name: Include dir setup
   include_tasks: prepare_dirs.yml
 

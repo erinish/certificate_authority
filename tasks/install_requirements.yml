@@ -1,0 +1,8 @@
+---
+- name: Install requirements
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - openssl
+    - rsync
