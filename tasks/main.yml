@@ -1,0 +1,15 @@
+---
+- name: Include dir setup
+  include_tasks: prepare_dirs.yml
+
+- name: Include Root CA setup
+  include_tasks: setup_root_ca.yml
+
+- name: Include Intermediate CA setup
+  include_tasks: setup_inter_ca.yml
+
+- name: Include Wrapper Script
+  include_tasks: setup_ca_wrapper_script.yml
+
+- name: Include local trust
+  include_tasks: setup_local_trust.yml

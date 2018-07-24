@@ -1,0 +1,11 @@
+ca_base_dir: /root/ca
+ca_common_name: "Example Root CA"
+ca_country_name: "US"
+ca_state_or_province_name: "New Jersey"
+ca_organization_name: "Example"
+ca_valid_days: 18250
+inter_ca_common_name: "Example Intermediate CA"
+inter_ca_country_name: "US"
+inter_ca_state_or_province_name: "New Jersey"
+inter_ca_organization_name: "Example"
+inter_ca_valid_days: 16425

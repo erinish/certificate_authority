@@ -1,0 +1,19 @@
+---
+- name: Copy wrapper script
+  template:
+    src: templates/local-ca.sh
+    dest: "{{ ca_base_dir }}/local-ca.sh"
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Copy readme templates
+  copy:
+    src: "files/{{ item }}"
+    dest: "{{ ca_base_dir }}/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - readme.txt
+    - readme-nokey.txt

@@ -1,0 +1,107 @@
+---
+- name: Create {{ ca_base_dir }} directory
+  file:
+    path: "{{ ca_base_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Create Root CA subdirectories
+  file:
+    path: "{{ ca_base_dir }}/{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+  with_items:
+    - certs
+    - crl
+    - newcerts
+    - private
+    - reqs
+    - intermediate
+
+- name: Create Intermediate CA subdirectories
+  file:
+    path: "{{ ca_base_dir }}/intermediate/{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+  with_items:
+    - certs
+    - crl
+    - newcerts
+    - private
+    - reqs
+
+- name: Check if Root CA index.txt exists
+  stat:
+    path: "{{ ca_base_dir }}/index.txt"
+  register: stat_base_index_txt
+
+- name: Create Root CA index.txt
+  copy:
+    dest: "{{ ca_base_dir }}/index.txt"
+    content: ""
+    owner: root
+    group: root
+    mode: 0600
+  when: "stat_base_index_txt.stat.exists == false"
+
+- name: Check if Intermediate CA index.txt exists
+  stat:
+    path: "{{ ca_base_dir }}/intermediate/index.txt"
+  register: stat_intermediate_index_txt
+
+- name: Create Intermediate CA index.txt
+  copy:
+    dest: "{{ ca_base_dir }}/intermediate/index.txt"
+    content: ""
+    owner: root
+    group: root
+    mode: 0600
+  when: "stat_intermediate_index_txt.stat.exists == false"
+
+- name: Check if Root CA serial exists
+  stat:
+    path: "{{ ca_base_dir }}/serial"
+  register: stat_base_serial
+
+- name: Create Root CA serial
+  copy:
+    dest: "{{ ca_base_dir }}/serial"
+    content: "1000"
+    owner: root
+    group: root
+    mode: 0600
+  when: "stat_base_serial.stat.exists == false"
+
+- name: Check if Intermediate CA serial exists
+  stat:
+    path: "{{ ca_base_dir }}/intermediate/serial"
+  register: stat_intermediate_serial
+
+- name: Create Intermediate CA serial
+  copy:
+    dest: "{{ ca_base_dir }}/intermediate/serial"
+    content: "1000"
+    owner: root
+    group: root
+    mode: 0600
+  when: "stat_intermediate_serial.stat.exists == false"
+
+- name: Check if Intermediate crlnumber exists
+  stat:
+    path: "{{ ca_base_dir }}/intermediate/crlnumber"
+  register: stat_intermediate_crlnumber
+
+- name: Create Intermediate crlnumber 
+  copy:
+    dest: "{{ ca_base_dir }}/intermediate/crlnumber"
+    content: "1000"
+    owner: root
+    group: root
+    mode: 0600
+  when: "stat_intermediate_crlnumber.stat.exists == false"

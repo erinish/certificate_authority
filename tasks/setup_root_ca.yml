@@ -1,0 +1,34 @@
+---
+- name: Place openssl.cnf
+  template:
+    src: templates/openssl.cnf.j2
+    dest: "{{ ca_base_dir }}/openssl.cnf"
+    owner: root
+    group: root
+    mode: 0600
+ 
+- name: Generate a new private key
+  command: openssl genrsa -out "{{ ca_base_dir }}/private/ca.key" 4096
+  args:
+    creates: "{{ ca_base_dir }}/private/ca.key"
+
+- name: Generate a CSR for the CA
+  command: openssl req -new -key {{ ca_base_dir }}/private/ca.key -out {{ ca_base_dir }}/reqs/ca.csr -subj '/C={{ ca_country_name}}/ST={{ ca_state_or_province_name }}/O={{ ca_organization_name }}/CN={{ ca_common_name}}'
+  args:
+    creates: "{{ ca_base_dir }}/reqs/ca.csr"
+
+- name: Sign the CSR for the CA
+  command: openssl req -config {{ ca_base_dir }}/openssl.cnf -key {{ ca_base_dir }}/private/ca.key -x509 -in {{ ca_base_dir }}/reqs/ca.csr -days {{ ca_valid_days }} -sha256 -extensions v3_ca -out {{ ca_base_dir }}/certs/ca.crt
+  args:
+    creates: "{{ ca_base_dir }}/certs/ca.crt"
+
+- name: Set permissions on new cert files
+  file:
+    path: "{{ item }}"
+    owner: root
+    group: root
+    mode: 0400
+  with_items:
+    - "{{ ca_base_dir }}/private/ca.key"
+    - "{{ ca_base_dir }}/reqs/ca.csr"
+    - "{{ ca_base_dir }}/certs/ca.crt"

@@ -1,0 +1,47 @@
+---
+- name: Place Intermediate openssl.cnf
+  template:
+    src: templates/openssl-inter.cnf.j2
+    dest: "{{ ca_base_dir }}/intermediate/openssl.cnf"
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Place Intermediate openssl-nosan.cnf
+  template:
+    src: templates/openssl-inter-nosan.cnf.j2
+    dest: "{{ ca_base_dir }}/intermediate/openssl-nosan.cnf"
+    owner: root
+    group: root
+    mode: 0600
+ 
+- name: Generate a new private key for inter
+  command: openssl genrsa -out "{{ ca_base_dir }}/intermediate/private/inter.key" 4096
+  args:
+    creates: "{{ ca_base_dir }}/intermediate/private/inter.key"
+
+- name: Generate a CSR for the inter
+  command: openssl req -config {{ ca_base_dir}}/intermediate/openssl-nosan.cnf -new -key {{ ca_base_dir }}/intermediate/private/inter.key -out {{ ca_base_dir }}/intermediate/reqs/inter.csr -subj '/C={{ inter_ca_country_name}}/ST={{ inter_ca_state_or_province_name }}/O={{ inter_ca_organization_name }}/CN={{ inter_ca_common_name}}'
+  args:
+    creates: "{{ ca_base_dir }}/intermediate/reqs/inter.csr"
+
+- name: Sign the CSR for the inter
+  command: openssl ca -batch -config {{ ca_base_dir }}/openssl.cnf -extensions v3_intermediate_ca -days 3650 -notext -md sha256 -in {{ ca_base_dir }}/intermediate/reqs/inter.csr -out {{ ca_base_dir }}/intermediate/certs/inter.crt
+  args:
+    creates: "{{ ca_base_dir }}/intermediate/certs/inter.crt"
+
+- name: Create the chain file
+  shell: cat {{ ca_base_dir}}/intermediate/certs/inter.crt {{ ca_base_dir }}/certs/ca.crt > {{ ca_base_dir }}/intermediate/certs/ca-chain.crt
+  args:
+    creates: "{{ ca_base_dir }}/intermediate/certs/ca-chain.crt"
+
+- name: Set permissions on new cert files
+  file:
+    path: "{{ item }}"
+    owner: root
+    group: root
+    mode: 0400
+  with_items:
+    - "{{ ca_base_dir }}/intermediate/private/inter.key"
+    - "{{ ca_base_dir }}/intermediate/reqs/inter.csr"
+    - "{{ ca_base_dir }}/intermediate/certs/inter.crt"
