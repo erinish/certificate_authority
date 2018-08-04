@@ -3,17 +3,14 @@
   template:
     src: templates/local-ca.sh
     dest: "{{ ca_base_dir }}/local-ca.sh"
-    owner: root
-    group: root
+    owner: "{{ ca_owner }}"
+    group: "{{ ca_group }}"
     mode: 0700
 
 - name: Copy readme templates
   copy:
-    src: "files/{{ item }}"
-    dest: "{{ ca_base_dir }}/{{ item }}"
-    owner: root
-    group: root
+    src: "files/readme.txt"
+    dest: "{{ ca_base_dir }}/readme.txt"
+    owner: "{{ ca_owner }}"
+    group: "{{ ca_group }}"
     mode: 0644
-  with_items:
-    - readme.txt
-    - readme-nokey.txt

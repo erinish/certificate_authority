@@ -31,23 +31,23 @@ function mk_readme() {
 
     homedir=$1
     domain=$2
-    pass=$3
-    bundledir=$4
+    bundledir=$3
+    pass=$4
 
     cp ${homedir}readme.txt ${bundledir}
     sed -i "s/##DOMAIN##/${domain}/g" ${bundledir}readme.txt
-    sed -i "s/##PASSWORD##/${pass}/g" ${bundledir}readme.txt
 
-}
+    if [[ "${pass}" != "" ]]; then
+        sed -i "s/##PASSWORD##/${pass}/g" ${bundledir}readme.txt
+    else
+        sed -i "/private\ key/d" ${bundledir}readme.txt
+        sed -i "/pre-compiled\ PKCS12/d" ${bundledir}readme.txt
+        sed -i "/pre-compiled\ JKS/d" ${bundledir}readme.txt
+    fi
 
-function mk_readme_nokey() {
-
-    homedir=$1
-    domain=$2
-    bundledir=$3
-
-    cp ${homedir}readme-nokey.txt ${bundledir}readme.txt
-    sed -i "s/##DOMAIN##/${domain}/g" ${bundledir}readme.txt
+    if [[ "${java_keytool}" != "" ]]; then
+        sed -i "/pre-compiled\ JKS/d" ${bundledir}readme.txt
+    fi
 
 }
 
@@ -125,7 +125,7 @@ function sign_csr() {
     echo "making directory: ${bundledir}"
     mkdir -p ${bundledir}
 
-    mk_readme_nokey ${HOMEDIR} ${DOMAIN} ${bundledir}
+    mk_readme ${HOMEDIR} ${DOMAIN} ${bundledir}
     cp ${FILE} ${bundledir}/$DOMAIN.csr
     cp ${HOMEDIR}intermediate/certs/$DOMAIN-${randhash}.crt ${bundledir}$DOMAIN.crt
     cp ${HOMEDIR}intermediate/certs/ca-chain.crt ${bundledir}ca-chain.crt
@@ -147,7 +147,7 @@ function gen_certs() {
     openssl ca -batch -config <(sed "s/##ALTNAMES##/${altnames}/g" ${HOMEDIR}intermediate/openssl.cnf) -extensions server_cert -extensions v3_req -days 3650 -notext -md sha256 -in ${HOMEDIR}intermediate/reqs/$DOMAIN-${randhash}.csr -out ${HOMEDIR}intermediate/certs/$DOMAIN-${randhash}.crt
 
     mkdir -p ${bundledir}
-    mk_readme ${HOMEDIR} ${DOMAIN} ${PASSWORD} ${bundledir}
+    mk_readme ${HOMEDIR} ${DOMAIN} ${bundledir} ${PASSWORD}
     cp ${HOMEDIR}intermediate/reqs/$DOMAIN-${randhash}.csr ${bundledir}$DOMAIN.csr
     cp ${HOMEDIR}intermediate/private/$DOMAIN-${randhash}.key ${bundledir}$DOMAIN.key
     cp ${HOMEDIR}intermediate/certs/$DOMAIN-${randhash}.crt ${bundledir}$DOMAIN.crt
@@ -157,7 +157,7 @@ function gen_certs() {
     cd ${bundledir}
     openssl pkcs12 -export -in $DOMAIN.crt -inkey $DOMAIN.key -chain -CAfile ${bundledir}ca-chain.crt -out $DOMAIN.p12 -name $DOMAIN -password pass:${PASSWORD}
     if [[ ${java_keytool} != "" ]]; then
-        ${java_keytool} -importkeystore -srckeystore ${DOMAIN}.p12 -srcstoretype pkcs12 -srcalias ${DOMAIN} -destkeystore ${DOMAIN}.jks -deststoretype jks -deststorepass ${PASSWORD} -destalias ${DOMAIN}
+        ${java_keytool} -importkeystore -srckeystore ${DOMAIN}.p12 -srcstoretype pkcs12 -srcalias ${DOMAIN} -srcstorepass ${PASSWORD} -destkeystore ${DOMAIN}.jks -deststoretype jks -deststorepass ${PASSWORD} -destalias ${DOMAIN}
     fi
 }
 

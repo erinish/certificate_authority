@@ -3,16 +3,16 @@
   template:
     src: templates/openssl-inter.cnf.j2
     dest: "{{ ca_base_dir }}/intermediate/openssl.cnf"
-    owner: root
-    group: root
+    owner: "{{ ca_owner }}"
+    group: "{{ ca_group }}"
     mode: 0600
 
 - name: Place Intermediate openssl-nosan.cnf
   template:
     src: templates/openssl-inter-nosan.cnf.j2
     dest: "{{ ca_base_dir }}/intermediate/openssl-nosan.cnf"
-    owner: root
-    group: root
+    owner: "{{ ca_owner }}"
+    group: "{{ ca_group }}"
     mode: 0600
  
 - name: Generate a new private key for inter
@@ -38,8 +38,8 @@
 - name: Set permissions on new cert files
   file:
     path: "{{ item }}"
-    owner: root
-    group: root
+    owner: "{{ ca_owner }}"
+    group: "{{ ca_group }}"
     mode: 0400
   with_items:
     - "{{ ca_base_dir }}/intermediate/private/inter.key"

@@ -1,4 +1,6 @@
 ca_base_dir: /root/ca
+ca_owner: root
+ca_group: root
 ca_common_name: "Example Root CA"
 ca_country_name: "US"
 ca_state_or_province_name: "New York"
@@ -10,3 +12,4 @@ inter_ca_state_or_province_name: "New York"
 inter_ca_organization_name: "Example"
 inter_ca_valid_days: 16425
 signed_cert_valid_days: 3750
+trust_local_ca: True

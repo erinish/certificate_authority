@@ -15,6 +15,8 @@ Role Variables
 
 ```YAML
 ca_base_dir: /root/ca
+ca_owner: root
+ca_group: root
 ca_common_name: "Example Co Root CA"
 ca_country_name: "US"
 ca_state_or_province_name: "New York"

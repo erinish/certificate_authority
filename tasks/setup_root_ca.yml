@@ -3,8 +3,8 @@
   template:
     src: templates/openssl.cnf.j2
     dest: "{{ ca_base_dir }}/openssl.cnf"
-    owner: root
-    group: root
+    owner: "{{ ca_owner }}"
+    group: "{{ ca_group }}"
     mode: 0600
  
 - name: Generate a new private key
@@ -25,8 +25,8 @@
 - name: Set permissions on new cert files
   file:
     path: "{{ item }}"
-    owner: root
-    group: root
+    owner: "{{ ca_owner }}"
+    group: "{{ ca_group }}"
     mode: 0400
   with_items:
     - "{{ ca_base_dir }}/private/ca.key"

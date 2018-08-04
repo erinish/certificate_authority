@@ -3,16 +3,16 @@
   file:
     path: "{{ ca_base_dir }}"
     state: directory
-    owner: root
-    group: root
+    owner: "{{ ca_owner }}"
+    group: "{{ ca_group }}"
     mode: 0700
 
 - name: Create Root CA subdirectories
   file:
     path: "{{ ca_base_dir }}/{{ item }}"
     state: directory
-    owner: root
-    group: root
+    owner: "{{ ca_owner }}"
+    group: "{{ ca_group }}"
     mode: 0700
   with_items:
     - certs
@@ -26,8 +26,8 @@
   file:
     path: "{{ ca_base_dir }}/intermediate/{{ item }}"
     state: directory
-    owner: root
-    group: root
+    owner: "{{ ca_owner }}"
+    group: "{{ ca_group }}"
     mode: 0700
   with_items:
     - certs
@@ -45,8 +45,8 @@
   copy:
     dest: "{{ ca_base_dir }}/index.txt"
     content: ""
-    owner: root
-    group: root
+    owner: "{{ ca_owner }}"
+    group: "{{ ca_group }}"
     mode: 0600
   when: "stat_base_index_txt.stat.exists == false"
 
@@ -59,8 +59,8 @@
   copy:
     dest: "{{ ca_base_dir }}/intermediate/index.txt"
     content: ""
-    owner: root
-    group: root
+    owner: "{{ ca_owner }}"
+    group: "{{ ca_group }}"
     mode: 0600
   when: "stat_intermediate_index_txt.stat.exists == false"
 
@@ -73,8 +73,8 @@
   copy:
     dest: "{{ ca_base_dir }}/serial"
     content: "1000"
-    owner: root
-    group: root
+    owner: "{{ ca_owner }}"
+    group: "{{ ca_group }}"
     mode: 0600
   when: "stat_base_serial.stat.exists == false"
 
@@ -87,8 +87,8 @@
   copy:
     dest: "{{ ca_base_dir }}/intermediate/serial"
     content: "1000"
-    owner: root
-    group: root
+    owner: "{{ ca_owner }}"
+    group: "{{ ca_group }}"
     mode: 0600
   when: "stat_intermediate_serial.stat.exists == false"
 
@@ -101,7 +101,7 @@
   copy:
     dest: "{{ ca_base_dir }}/intermediate/crlnumber"
     content: "1000"
-    owner: root
-    group: root
+    owner: "{{ ca_owner }}"
+    group: "{{ ca_group }}"
     mode: 0600
   when: "stat_intermediate_crlnumber.stat.exists == false"
