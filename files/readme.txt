@@ -13,3 +13,5 @@ Included are the following files:
 5. A pre-formatted Chain + Certificate for use in web servers such as Nginx, ##DOMAIN##-nginx.crt
 
 6. A pre-compiled PKCS12, ##DOMAIN##.p12. The password for this p12 is ##PASSWORD##
+
+7. A pre-compiled JKS (Java Keystore), ##DOMAIN##.jks. The password for this JKS is ##PASSWORD##

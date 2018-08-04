@@ -1,12 +1,29 @@
 ---
-- name: Copy root CA public cert to trusted dir
-  synchronize:
-    src: "{{ ca_base_dir }}/certs/ca.crt"
-    dest: /etc/pki/ca-trust/source/anchors/ansible-generated-local-ca.crt
-  delegate_to: "{{ inventory_hostname }}"
+- block:
+    - name: Copy root CA public cert to trusted dir
+      synchronize:
+        src: "{{ ca_base_dir }}/certs/ca.crt"
+        dest: /etc/pki/ca-trust/source/anchors/ansible-generated-local-ca.crt
+      delegate_to: "{{ inventory_hostname }}"
 
-- name: Add certs to truststore
-  command: update-ca-trust
-  register: update_trust
-  changed_when: "update_trust.rc != 0"
+    - name: Add certs to truststore
+      command: update-ca-trust
+      register: update_trust
+      changed_when: "update_trust.rc != 0"
+  when: 
+    - ansible_distribution in ['CentOS', 'RedHat'] 
+    - trust_local_ca
+- block:
+    - name: Copy root CA public cert to trusted dir
+      synchronize:
+        src: "{{ ca_base_dir }}/certs/ca.crt"
+        dest: /usr/local/share/ca-certificates/ansible-generated-local-ca.crt
+      delegate_to: "{{ inventory_hostname }}"
 
+    - name: Add certs to truststore
+      command: update-ca-certificates
+      register: update_trust
+      changed_when: "update_trust.rc != 0"
+  when: 
+    - ansible_distribution in ['Ubuntu', 'Debian'] 
+    - trust_local_ca

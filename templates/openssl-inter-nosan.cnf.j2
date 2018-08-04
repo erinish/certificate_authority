@@ -30,7 +30,7 @@ default_md        = sha256
 
 name_opt          = ca_default
 cert_opt          = ca_default
-default_days      = 3750
+default_days      = {{ signed_cert_valid_days }}
 preserve          = no
 policy            = policy_loose
 
@@ -80,7 +80,7 @@ emailAddress                    = Email Address
 
 # Optionally, specify some defaults.
 countryName_default             = US
-stateOrProvinceName_default     = New Jersey
+stateOrProvinceName_default     = New York
 localityName_default            =
 0.organizationName_default      = Example
 organizationalUnitName_default  =

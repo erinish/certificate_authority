@@ -2,6 +2,9 @@
 
 HOMEDIR={{ ca_base_dir }}/
 
+# Check for Java Keytool
+java_keytool=$(which keytool)
+
 function usage() {
 cat << EOF
 USAGE: $0 sign <file> | gen <domain1> [domain2] [domain3] ...  
@@ -119,7 +122,6 @@ function sign_csr() {
     dir_exists ${bundledir}
 
     openssl ca -batch -config <(sed "s/##ALTNAMES##/${altnames}/g" ${HOMEDIR}intermediate/openssl.cnf) -extensions server_cert -extensions v3_req -days 3650 -notext -md sha256 -in ${FILE} -out ${HOMEDIR}intermediate/certs/${DOMAIN}-${randhash}.crt
-#    mkdir -p ${HOMEDIR}intermediate/bundles/$DOMAIN
     echo "making directory: ${bundledir}"
     mkdir -p ${bundledir}
 
@@ -129,7 +131,6 @@ function sign_csr() {
     cp ${HOMEDIR}intermediate/certs/ca-chain.crt ${bundledir}ca-chain.crt
     cat ${bundledir}/$DOMAIN.crt > ${bundledir}/$DOMAIN-nginx.crt
     cat ${bundledir}/ca-chain.crt >> ${bundledir}/$DOMAIN-nginx.crt
-#    /root/ca/create-download.sh $DOMAIN	$bundledir
     exit 0
 }
 
@@ -155,7 +156,9 @@ function gen_certs() {
     cat ${bundledir}ca-chain.crt >> ${bundledir}$DOMAIN-nginx.crt
     cd ${bundledir}
     openssl pkcs12 -export -in $DOMAIN.crt -inkey $DOMAIN.key -chain -CAfile ${bundledir}ca-chain.crt -out $DOMAIN.p12 -name $DOMAIN -password pass:${PASSWORD}
-#    /root/ca/create-download.sh $DOMAIN $bundledir
+    if [[ ${java_keytool} != "" ]]; then
+        ${java_keytool} -importkeystore -srckeystore ${DOMAIN}.p12 -srcstoretype pkcs12 -srcalias ${DOMAIN} -destkeystore ${DOMAIN}.jks -deststoretype jks -deststorepass ${PASSWORD} -destalias ${DOMAIN}
+    fi
 }
 
 ## Deal with OPTS

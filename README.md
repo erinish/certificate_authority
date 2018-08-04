@@ -6,7 +6,9 @@ Adds a locally-trusted Certificate Authority and associated helper scripts to si
 Requirements
 ------------
 
-Designed and tested on CentOS 7. Requires OpenSSL.
+Requires OpenSSL (will be installed by role if absent).
+
+Requires a JDK if Java Keystores are needed (keytool). Silently ignores JKS generation if absent.
 
 Role Variables
 --------------
@@ -23,6 +25,8 @@ inter_ca_country_name: "US"
 inter_ca_state_or_province_name: "New York"
 inter_ca_organization_name: "Example Co"
 inter_ca_valid_days: 16425
+signed_cert_valid_days: 3750
+trust_local_ca: True
 ```
 
 
@@ -40,6 +44,7 @@ Example Playbook
       inter_ca_common_name: "Hollywoo Intermediate CA"
       inter_ca_state_or_province_name: "California"
       inter_ca_organization_name: "Hollywoo"
+      signed_cert_valid_days: 30
 ```
 License
 -------
