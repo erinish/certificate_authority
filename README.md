@@ -48,6 +48,27 @@ Example Playbook
       inter_ca_organization_name: "Hollywoo"
       signed_cert_valid_days: 30
 ```
+
+
+Using the CA
+------------
+```BASH
+$ cd /root/ca
+
+$ ./local-ca.sh gen mycert.example.com
+
+$ cd intermediate/bundles/
+
+$ ls
+mycert.example.com-2018-08-04-9ca15dc9
+
+$ cd mycert.example.com-2018-08-04-9ca15dc9
+
+$ ls
+ca-chain.crt  mycert.example.com.crt  mycert.example.com.csr  mycert.example.com.jks  mycert.example.com.key  mycert.example.com-nginx.crt  mycert.example.com.p12  readme.txt
+```
+
+
 License
 -------
 
