@@ -45,7 +45,7 @@ function mk_readme() {
         sed -i "/pre-compiled\ JKS/d" ${bundledir}readme.txt
     fi
 
-    if [[ "${java_keytool}" != "" ]]; then
+    if [[ "${java_keytool}" == "" ]]; then
         sed -i "/pre-compiled\ JKS/d" ${bundledir}readme.txt
     fi
 
@@ -157,7 +157,7 @@ function gen_certs() {
     cd ${bundledir}
     openssl pkcs12 -export -in $DOMAIN.crt -inkey $DOMAIN.key -chain -CAfile ${bundledir}ca-chain.crt -out $DOMAIN.p12 -name $DOMAIN -password pass:${PASSWORD}
     if [[ ${java_keytool} != "" ]]; then
-        ${java_keytool} -importkeystore -srckeystore ${DOMAIN}.p12 -srcstoretype pkcs12 -srcalias ${DOMAIN} -srcstorepass ${PASSWORD} -destkeystore ${DOMAIN}.jks -deststoretype jks -deststorepass ${PASSWORD} -destalias ${DOMAIN}
+        ${java_keytool} -importkeystore -srckeystore ${DOMAIN}.p12 -srcstoretype pkcs12 -srcalias ${DOMAIN} -srcstorepass ${PASSWORD} -destkeystore ${DOMAIN}.jks -deststoretype jks -deststorepass ${PASSWORD} -destalias ${DOMAIN} > /dev/null 2>&1
     fi
 }
 
