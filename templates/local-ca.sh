@@ -143,7 +143,7 @@ function gen_certs() {
     dir_exists ${bundledir}
     openssl genrsa -out ${HOMEDIR}intermediate/private/$DOMAIN-${randhash}.key 4096 > /dev/null 2>&1
 
-    openssl req -new -key ${HOMEDIR}intermediate/private/$DOMAIN-${randhash}.key -sha256 -nodes -subj "/C={{ ca_country_name }}/ST={{ ca_state_or_province_name }}/O={{ ca_organization_name }}/CN=$DOMAIN" -config <(sed "s/##ALTNAMES##/${altnames}/g" ${HOMEDIR}intermediate/openssl.cnf) > ${HOMEDIR}intermediate/reqs/$DOMAIN-${randhash}.csr > /dev/null 2>&1
+    openssl req -new -key ${HOMEDIR}intermediate/private/$DOMAIN-${randhash}.key -sha256 -nodes -subj "/C={{ ca_country_name }}/ST={{ ca_state_or_province_name }}/O={{ ca_organization_name }}/CN=$DOMAIN" -config <(sed "s/##ALTNAMES##/${altnames}/g" ${HOMEDIR}intermediate/openssl.cnf) -out ${HOMEDIR}intermediate/reqs/$DOMAIN-${randhash}.csr > /dev/null 2>&1
     openssl ca -batch -config <(sed "s/##ALTNAMES##/${altnames}/g" ${HOMEDIR}intermediate/openssl.cnf) -extensions server_cert -extensions v3_req -days 3650 -notext -md sha256 -in ${HOMEDIR}intermediate/reqs/$DOMAIN-${randhash}.csr -out ${HOMEDIR}intermediate/certs/$DOMAIN-${randhash}.crt > /dev/null 2>&1
 
     mkdir -p ${bundledir}
