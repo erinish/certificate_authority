@@ -16,3 +16,10 @@
 
 - name: Include local trust
   include_tasks: setup_local_trust.yml
+
+- name: Final permissions sweep
+  file:
+    name: "{{ ca_base_dir }}"
+    owner: "{{ca_owner }}"
+    group: "{{ca_group }}"
+    recurse: True
