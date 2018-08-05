@@ -7,9 +7,10 @@ galaxy_info:
     - ssl
     - tls
     - certificates
-    - certificate authority
+    - certificate
     - ca
     - encryption
+    - openssl
 
-  dependencies: 
-    - OpenSSL
+dependencies: 
+  - OpenSSL
