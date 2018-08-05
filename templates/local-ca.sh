@@ -141,10 +141,10 @@ function gen_certs() {
     bundledir="${HOMEDIR}intermediate/bundles/${DOMAIN}-${curdate}-${randhash}/"
     PASSWORD=$(openssl rand -hex 6)
     dir_exists ${bundledir}
-    openssl genrsa -out ${HOMEDIR}intermediate/private/$DOMAIN-${randhash}.key 4096
+    openssl genrsa -out ${HOMEDIR}intermediate/private/$DOMAIN-${randhash}.key 4096 > /dev/null 2>&1
 
-    openssl req -new -key ${HOMEDIR}intermediate/private/$DOMAIN-${randhash}.key -sha256 -nodes -subj "/C={{ ca_country_name }}/ST={{ ca_state_or_province_name }}/O={{ ca_organization_name }}/CN=$DOMAIN" -config <(sed "s/##ALTNAMES##/${altnames}/g" ${HOMEDIR}intermediate/openssl.cnf) > ${HOMEDIR}intermediate/reqs/$DOMAIN-${randhash}.csr
-    openssl ca -batch -config <(sed "s/##ALTNAMES##/${altnames}/g" ${HOMEDIR}intermediate/openssl.cnf) -extensions server_cert -extensions v3_req -days 3650 -notext -md sha256 -in ${HOMEDIR}intermediate/reqs/$DOMAIN-${randhash}.csr -out ${HOMEDIR}intermediate/certs/$DOMAIN-${randhash}.crt
+    openssl req -new -key ${HOMEDIR}intermediate/private/$DOMAIN-${randhash}.key -sha256 -nodes -subj "/C={{ ca_country_name }}/ST={{ ca_state_or_province_name }}/O={{ ca_organization_name }}/CN=$DOMAIN" -config <(sed "s/##ALTNAMES##/${altnames}/g" ${HOMEDIR}intermediate/openssl.cnf) > ${HOMEDIR}intermediate/reqs/$DOMAIN-${randhash}.csr > /dev/null 2>&1
+    openssl ca -batch -config <(sed "s/##ALTNAMES##/${altnames}/g" ${HOMEDIR}intermediate/openssl.cnf) -extensions server_cert -extensions v3_req -days 3650 -notext -md sha256 -in ${HOMEDIR}intermediate/reqs/$DOMAIN-${randhash}.csr -out ${HOMEDIR}intermediate/certs/$DOMAIN-${randhash}.crt > /dev/null 2>&1
 
     mkdir -p ${bundledir}
     mk_readme ${HOMEDIR} ${DOMAIN} ${bundledir} ${PASSWORD}
@@ -155,10 +155,12 @@ function gen_certs() {
     cat ${bundledir}$DOMAIN.crt > ${bundledir}$DOMAIN-nginx.crt
     cat ${bundledir}ca-chain.crt >> ${bundledir}$DOMAIN-nginx.crt
     cd ${bundledir}
-    openssl pkcs12 -export -in $DOMAIN.crt -inkey $DOMAIN.key -chain -CAfile ${bundledir}ca-chain.crt -out $DOMAIN.p12 -name $DOMAIN -password pass:${PASSWORD}
+    openssl pkcs12 -export -in $DOMAIN.crt -inkey $DOMAIN.key -chain -CAfile ${bundledir}ca-chain.crt -out $DOMAIN.p12 -name $DOMAIN -password pass:${PASSWORD} > /dev/null 2>&1
     if [[ ${java_keytool} != "" ]]; then
         ${java_keytool} -importkeystore -srckeystore ${DOMAIN}.p12 -srcstoretype pkcs12 -srcalias ${DOMAIN} -srcstorepass ${PASSWORD} -destkeystore ${DOMAIN}.jks -deststoretype jks -deststorepass ${PASSWORD} -destalias ${DOMAIN} > /dev/null 2>&1
     fi
+    # Output only the directory name where the certs are for easy scripting
+    echo "${bundledir}"
 }
 
 ## Deal with OPTS
