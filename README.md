@@ -59,6 +59,8 @@ Using the CA in a Playbook
 Here is a short example where the local CA is used to generate new certs
 and move them to a directory. You could also push them to remote servers, slurp them, etc. 
 
+The generated cert is for test.example.com with SAN for test.example.com and dev.example.com
+
 ```YAML
 ---
 - name: Test generating and placing a certificate
