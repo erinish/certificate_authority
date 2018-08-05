@@ -41,7 +41,7 @@ Example Playbook
 ```YAML
 ---
 - name: local CA role application
-  hosts: phylactery
+  hosts: localhost
   roles:
     - role: erinish.certificate_authority
       ca_common_name: "Hollywoo Root CA"
