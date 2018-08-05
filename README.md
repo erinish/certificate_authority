@@ -3,6 +3,8 @@ Certificate Authority
 
 Adds a locally-trusted Certificate Authority and associated helper scripts to simplify creating internal certificates.
 
+All generated certificates will have Subject Alternate Names (SAN) by default, and support multiple names.
+
 Requirements
 ------------
 
